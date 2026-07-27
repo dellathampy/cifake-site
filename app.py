@@ -6,6 +6,7 @@ import os
 import numpy as np
 import gradio as gr
 import tensorflow as tf
+import matplotlib
 import matplotlib.cm as cm
 from PIL import Image
 
@@ -59,7 +60,7 @@ def overlay_heatmap(original_img, heatmap, alpha=0.4):
             (original_img.shape[1], original_img.shape[0])
         )
     )
-    jet = cm.get_cmap("jet")
+    jet = matplotlib.colormaps["jet"]
     jet_colors = jet(np.arange(256))[:, :3]
     jet_heatmap = jet_colors[heatmap_resized]
     jet_heatmap = np.uint8(jet_heatmap * 255)
