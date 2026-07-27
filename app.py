@@ -1,9 +1,5 @@
 """
 CIFAKE: Real vs AI-Generated Image Classifier — Web Demo
-Deploy this on Hugging Face Spaces (see README.md for steps).
-
-Requires: cifake_model.keras (produced by your training notebook, Step 10)
-to be placed in the SAME folder as this file before deploying.
 """
 
 import os
