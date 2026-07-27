@@ -1,9 +1,5 @@
 """
 CIFAKE: Real vs AI-Generated Image Classifier — Web Demo
-Deploy this on Hugging Face Spaces (see README.md for steps).
-
-Requires: cifake_model.keras (produced by your training notebook, Step 10)
-to be placed in the SAME folder as this file before deploying.
 """
 
 import os
@@ -19,21 +15,26 @@ IMG_SIZE = 32
 # ---------- Load model once at startup ----------
 model = tf.keras.models.load_model(MODEL_PATH)
 
-# Run one dummy forward pass so the model's internal graph is built —
-# otherwise layer.output isn't defined yet for a Sequential model
-# loaded fresh from disk, and Grad-CAM setup below fails. Calling the
-# model directly (not .predict()) is what actually registers the graph.
-_ = model(np.zeros((1, IMG_SIZE, IMG_SIZE, 3), dtype="float32"), training=False)
-
 # Find the last Conv2D layer automatically (same trick as the notebook)
 last_conv_layer_name = [
     layer.name for layer in model.layers
     if isinstance(layer, tf.keras.layers.Conv2D)
 ][-1]
 
-grad_model = tf.keras.models.Model(
-    [model.inputs], [model.get_layer(last_conv_layer_name).output, model.output]
-)
+# Rebuild the model as an explicit functional graph using a symbolic
+# Input, tracking the last conv layer's output along the way. This is
+# necessary because a Sequential model loaded fresh from disk doesn't
+# have `.output` defined until it's used inside a functional graph —
+# calling it on real (eager) data does NOT count, only symbolic does.
+_inputs = tf.keras.Input(shape=(IMG_SIZE, IMG_SIZE, 3))
+_x = _inputs
+_conv_output = None
+for layer in model.layers:
+    _x = layer(_x)
+    if layer.name == last_conv_layer_name:
+        _conv_output = _x
+
+grad_model = tf.keras.models.Model(inputs=_inputs, outputs=[_conv_output, _x])
 
 
 def make_gradcam_heatmap(img_array):
