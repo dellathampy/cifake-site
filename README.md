@@ -34,10 +34,10 @@ The interesting part isn't just the prediction, it's seeing *why*. Grad-CAM high
 ## Example outputs
 
 **Real image:**
-![Real prediction](real_example.png)
+![Real prediction](Screenshot1)
 
 **AI-generated image:**
-![Fake prediction](fake_example.png)
+![Fake prediction](Screenshot2)
 
 ## Tech stack
 
