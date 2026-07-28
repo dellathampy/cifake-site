@@ -31,6 +31,14 @@ Images are 32x32 RGB, trained on roughly 20,000 images (10,000 per class) out of
 
 The interesting part isn't just the prediction, it's seeing *why*. Grad-CAM highlights the pixels that most influenced the model's decision by looking at gradients flowing back into the last convolutional layer. In practice, real images tend to light up more evenly across the frame, while fake images tend to show the model fixating on smaller, weirder regions — textures or artifacts that don't look "natural." That pattern shows up on the demo site as a heatmap overlay next to each prediction.
 
+## Example outputs
+
+**Real image:**
+![Real prediction](real_example.png)
+
+**AI-generated image:**
+![Fake prediction](fake_example.png)
+
 ## Tech stack
 
 - **Model:** TensorFlow / Keras (CNN)
